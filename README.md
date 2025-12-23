@@ -1,17 +1,18 @@
 # NoteWise AI
 
-A modern, full-stack RAG (Retrieval-Augmented Generation) application built with Next.js, TypeScript, and the latest AI SDK stack. Transform your notes into a searchable knowledge base powered by AI.
+A modern, full-stack AI agent application built with Next.js, TypeScript, and the latest AI SDK stack. Transform your notes into an intelligent assistant that can search, reason, and perform actions using your knowledge base through RAG (Retrieval-Augmented Generation) and tool calling capabilities.
 
-## 🚀 Features
+## Features
 
+- **AI Agent with Tool Calling**: Multi-step reasoning agent that can search notes, draft content, and perform actions using your knowledge base
 - **Smart RAG Pipeline**: Upload markdown notes, automatically chunked and embedded using OpenAI
 - **Vector Search**: Fast semantic search powered by pgvector with HNSW indexing
-- **AI Chat Interface**: Ask questions and get answers grounded in your notes
+- **AI Chat Interface**: Ask questions and get answers grounded in your notes with agentic capabilities
 - **File Management**: Upload, view, and delete embedded files through an intuitive UI
 - **Authentication**: Secure user authentication with Clerk
 - **Modern Stack**: Built with Next.js 16, React 19, Drizzle ORM, and Vercel AI SDK
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: Next.js 16 (App Router)
 - **UI**: React 19, Tailwind CSS
@@ -21,14 +22,14 @@ A modern, full-stack RAG (Retrieval-Augmented Generation) application built with
 - **Auth**: Clerk
 - **Validation**: Zod
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js 18+ and pnpm (or npm/yarn)
 - PostgreSQL database with pgvector extension (or Docker)
 - OpenAI API key
 - Clerk account (for authentication)
 
-## 🏃 Getting Started
+## Getting Started
 
 ### 1. Clone the Repository
 
@@ -86,7 +87,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 📚 Usage
+## Usage
 
 ### Uploading Notes
 
@@ -95,12 +96,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 3. Upload markdown (`.md`) files
 4. Files are automatically chunked, embedded, and stored
 
-### Chatting with Your Notes
+### Chatting with Your AI Agent
 
-1. Ask questions in the chat interface
-2. The AI searches your notes using vector similarity
-3. Responses are grounded in your uploaded content
-4. Sources are cited automatically
+1. Ask questions or request actions in the chat interface
+2. The AI agent searches your notes using vector similarity
+3. The agent can perform multi-step reasoning and use tools to accomplish tasks
+4. Responses are grounded in your uploaded content with sources cited automatically
 
 ### Managing Files
 
@@ -108,7 +109,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - See chunk counts and upload dates
 - Delete files and their embeddings when needed
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 notewise-ai-ts/
@@ -132,7 +133,7 @@ notewise-ai-ts/
 └── docker-compose.yml    # Local database setup
 ```
 
-## 🔧 Available Scripts
+## Available Scripts
 
 - `pnpm dev` - Start development server
 - `pnpm build` - Build for production
@@ -143,7 +144,7 @@ notewise-ai-ts/
 - `pnpm db:migrate` - Run database migrations
 - `pnpm db:studio` - Open Drizzle Studio (database GUI)
 
-## 🧪 Development
+## Development
 
 ### Adding Notes via Script
 
@@ -163,7 +164,7 @@ View your database using Drizzle Studio:
 pnpm db:studio
 ```
 
-## 📖 Documentation
+## Documentation
 
 - [CLERK_SETUP.md](./CLERK_SETUP.md) - Setting up Clerk authentication
 - [OPENAI_SETUP.md](./OPENAI_SETUP.md) - Setting up OpenAI API key
@@ -173,14 +174,14 @@ pnpm db:studio
 - [EMBEDDINGS_GUIDE.md](./EMBEDDINGS_GUIDE.md) - Guide to embeddings and vector search
 - [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - Common issues and solutions
 
-## 🔒 Security
+## Security
 
 - Never commit `.env.local` (it's in `.gitignore`)
 - All API keys are stored in environment variables
 - Authentication is handled by Clerk
 - Database credentials should be kept secure
 
-## 🚢 Deployment
+## Deployment
 
 This project is ready for deployment on Vercel:
 
@@ -191,10 +192,10 @@ This project is ready for deployment on Vercel:
 
 Make sure to set up your production database (e.g., Vercel Postgres with pgvector, Supabase, or Neon).
 
-## 📝 License
+## License
 
 MIT
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
