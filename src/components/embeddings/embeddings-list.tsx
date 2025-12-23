@@ -76,94 +76,100 @@ export function EmbeddingsList() {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return 'Unknown';
-    const date = new Date(dateString);
-    return date.toLocaleString();
+    try {
+      const date = new Date(dateString);
+      // Check if date is valid
+      if (isNaN(date.getTime())) return 'Invalid date';
+      // Format as: Dec 23, 2024
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+    } catch {
+      return 'Invalid date';
+    }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-        <span className="ml-2 text-gray-600">Loading files...</span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-        <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-        <div>
-          <p className="text-sm font-medium text-red-800">Error loading files</p>
-          <p className="text-xs text-red-600 mt-1">{error}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (files.length === 0) {
-    return (
-      <div className="text-center p-8 text-gray-500">
-        <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-        <p className="text-sm">No files uploaded yet</p>
-        <p className="text-xs mt-1">Upload a markdown file to get started</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between mb-4">
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-gray-700">
           Uploaded Files ({files.length})
         </h3>
-        <button
-          onClick={fetchFiles}
-          className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
-        >
-          Refresh
-        </button>
-      </div>
-      
-      <div className="space-y-2 max-h-64 overflow-y-auto">
-        {files.map((file) => (
-          <div
-            key={file.source}
-            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+        {!loading && (
+          <button
+            onClick={fetchFiles}
+            className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
           >
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              <FileText className="w-5 h-5 text-blue-600 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-800 truncate">
-                  {file.fileName || file.source}
-                </p>
-                <div className="flex items-center gap-3 mt-1">
-                  <span className="text-xs text-gray-500">
-                    {file.chunkCount} chunk{file.chunkCount !== 1 ? 's' : ''}
-                  </span>
-                  <span className="text-xs text-gray-400">•</span>
-                  <span className="text-xs text-gray-500">
-                    {formatDate(file.lastUpdated)}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={() => handleDelete(file.source)}
-              disabled={deleting === file.source}
-              className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-              title="Delete all chunks for this file"
-            >
-              {deleting === file.source ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Trash2 className="w-4 h-4" />
-              )}
-            </button>
+            Refresh
+          </button>
+        )}
+      </div>
+
+      <div className="flex-1 overflow-hidden">
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+            <span className="ml-2 text-gray-600">Loading files...</span>
           </div>
-        ))}
+        ) : error ? (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-red-800">Error loading files</p>
+              <p className="text-xs text-red-600 mt-1">{error}</p>
+            </div>
+          </div>
+        ) : files.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
+            <FileText className="w-12 h-12 mb-3 text-gray-300" />
+            <p className="text-sm">No files uploaded yet</p>
+            <p className="text-xs mt-1">Upload a markdown file to get started</p>
+          </div>
+        ) : (
+          <div className="overflow-y-auto space-y-2 pr-1 h-full">
+            {files.map((file) => (
+              <div
+                key={file.source}
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+              >
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <FileText className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-800 truncate" title={file.fileName || file.source}>
+                      {file.fileName || file.source}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-gray-500">
+                        {file.chunkCount} chunk{file.chunkCount !== 1 ? 's' : ''}
+                      </span>
+                      <span className="text-xs text-gray-400">•</span>
+                      <span className="text-xs text-gray-500">
+                        {formatDate(file.lastUpdated)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleDelete(file.source)}
+                  disabled={deleting === file.source}
+                  className="p-1.5 text-red-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 ml-2"
+                  title={`Delete ${file.fileName || file.source}`}
+                >
+                  {deleting === file.source ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
 
