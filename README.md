@@ -55,8 +55,9 @@ cp .env.example .env.local
 Then edit `.env.local` with your actual credentials:
 
 - **Database**: Update `DATABASE_URL` with your PostgreSQL connection string
-- **Clerk**: Get keys from [Clerk Dashboard](https://dashboard.clerk.com) - see [CLERK_SETUP.md](./CLERK_SETUP.md)
-- **OpenAI**: Get API key from [OpenAI Platform](https://platform.openai.com/api-keys) - see [OPENAI_SETUP.md](./OPENAI_SETUP.md)
+- **Clerk**: Get keys from [Clerk Dashboard](https://dashboard.clerk.com)
+- **OpenAI**: Get API key from [OpenAI Platform](https://platform.openai.com/api-keys)
+- **Invite-Only Access (Optional)**: Configure in Clerk Dashboard
 
 ### 4. Set Up Database
 
@@ -111,7 +112,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Project Structure
 
-```
+```text
 notewise-ai-ts/
 ├── src/
 │   ├── app/              # Next.js App Router
@@ -163,16 +164,6 @@ View your database using Drizzle Studio:
 ```bash
 pnpm db:studio
 ```
-
-## Documentation
-
-- [CLERK_SETUP.md](./CLERK_SETUP.md) - Setting up Clerk authentication
-- [OPENAI_SETUP.md](./OPENAI_SETUP.md) - Setting up OpenAI API key
-- [VIEW_DATABASE.md](./VIEW_DATABASE.md) - How to view and manage the database
-- [DATABASE_CONCEPTS.md](./DATABASE_CONCEPTS.md) - Understanding indexes and connection pooling
-- [HNSW_EXPLANATION.md](./HNSW_EXPLANATION.md) - How HNSW indexing works for vectors
-- [EMBEDDINGS_GUIDE.md](./EMBEDDINGS_GUIDE.md) - Guide to embeddings and vector search
-- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - Common issues and solutions
 
 ## Security
 

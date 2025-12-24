@@ -33,18 +33,18 @@ export default function Home() {
         </div>
 
         <SignedOut>
-            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-white rounded-lg shadow-sm border border-gray-200">
-                <Bot className="w-16 h-16 text-blue-200 mb-4" />
-                <h2 className="text-xl font-semibold text-gray-700 mb-2">Welcome to NoteWise AI</h2>
-                <p className="text-gray-500 mb-6 max-w-md">
-                    Please sign in to access your personal note assistant and start chatting with your knowledge base.
-                </p>
-                <SignInButton mode="modal">
-                    <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                        Sign In to Continue
-                    </button>
-                </SignInButton>
-            </div>
+          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-white rounded-lg shadow-sm border border-gray-200">
+            <Bot className="w-16 h-16 text-blue-200 mb-4" />
+            <h2 className="text-xl font-semibold text-gray-700 mb-2">Welcome to NoteWise AI</h2>
+            <p className="text-gray-500 mb-6 max-w-md">
+              Please sign in to access your personal note assistant and start chatting with your knowledge base.
+            </p>
+            <SignInButton mode="modal">
+              <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                Sign In to Continue
+              </button>
+            </SignInButton>
+          </div>
         </SignedOut>
 
         <SignedIn>
