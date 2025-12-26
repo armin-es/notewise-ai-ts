@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Get all embeddings grouped by source (file name)
+    // Get all embeddings grouped by source (file name), filtered by user
     // Using raw SQL for better aggregation
     const result = await db.execute(sql`
       SELECT 
@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
         array_agg(id::text) as "embeddingIds"
       FROM embeddings
       WHERE metadata->>'source' IS NOT NULL
+        AND user_id = ${userId}
       GROUP BY metadata->>'source', metadata->>'fileName'
       ORDER BY MAX(created_at) DESC
     `);
@@ -83,10 +84,10 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // Delete all embeddings where metadata->>'source' matches
+    // Delete all embeddings where metadata->>'source' matches AND belongs to user
     const deleted = await db
       .delete(embeddings)
-      .where(sql`${embeddings.metadata}->>'source' = ${source}`)
+      .where(sql`${embeddings.metadata}->>'source' = ${source} AND user_id = ${userId}`)
       .returning({ id: embeddings.id });
 
     return NextResponse.json({

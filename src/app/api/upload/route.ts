@@ -89,10 +89,9 @@ export async function POST(req: NextRequest) {
     // Insert each chunk with metadata
     let inserted = 0;
     for (const chunk of chunks) {
-      await insertEmbedding(chunk, {
+      await insertEmbedding(chunk, userId, {
         source: file.name,
         fileName: file.name,
-        uploadedBy: userId,
         uploadedAt: new Date().toISOString(),
         chunkIndex: inserted,
         totalChunks: chunks.length,
