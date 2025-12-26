@@ -5,8 +5,28 @@ import { Bot } from 'lucide-react';
 import { ChatInterface } from '@/components/chat/chat-interface';
 import { FileUpload } from '@/components/upload/file-upload';
 import { EmbeddingsList } from '@/components/embeddings/embeddings-list';
+import { ChatList, ChatListRef } from '@/components/chat/chat-list';
+import { useState, useCallback, useRef } from 'react';
 
 export default function Home() {
+  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+  const [chatKey, setChatKey] = useState(0); // Force remount on new chat
+  const chatListRef = useRef<ChatListRef>(null);
+
+  const handleSelectChat = useCallback((chatId: string) => {
+    setSelectedChatId(chatId);
+  }, []);
+
+  const handleNewChat = useCallback(() => {
+    setSelectedChatId(null);
+    setChatKey(prev => prev + 1); // Force remount to clear messages
+  }, []);
+
+  const handleChatCreated = useCallback((chatId: string) => {
+    setSelectedChatId(chatId);
+    // Refresh the chat list to show the new chat
+    chatListRef.current?.refresh();
+  }, []);
   return (
     <main className="flex min-h-screen flex-col items-center bg-gray-50 p-4">
       <div className="w-full max-w-7xl flex flex-col h-[85vh]">
@@ -49,8 +69,27 @@ export default function Home() {
 
         <SignedIn>
           <div className="flex-1 flex gap-4 min-h-0">
-            {/* Sidebar */}
-            <div className="w-80 flex-shrink-0 flex flex-col gap-4">
+            {/* Left Sidebar - Chat List */}
+            <div className="w-64 flex-shrink-0 bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <ChatList
+                ref={chatListRef}
+                selectedChatId={selectedChatId}
+                onSelectChat={handleSelectChat}
+                onNewChat={handleNewChat}
+              />
+            </div>
+
+            {/* Main Chat Area */}
+            <div className="flex-1 flex flex-col min-h-0">
+              <ChatInterface 
+                key={chatKey} 
+                chatId={selectedChatId} 
+                onChatCreated={handleChatCreated}
+              />
+            </div>
+            
+            {/* Right Sidebar - Files */}
+            <div className="w-72 flex-shrink-0 flex flex-col gap-4">
               <div className="bg-white rounded-lg border border-gray-200 p-4">
                 <h2 className="text-sm font-semibold text-gray-700 mb-3">Upload Notes</h2>
                 <FileUpload />
@@ -58,11 +97,6 @@ export default function Home() {
               <div className="bg-white rounded-lg border border-gray-200 p-4 flex-1 flex flex-col min-h-0">
                 <EmbeddingsList />
               </div>
-            </div>
-            
-            {/* Main Chat Area */}
-            <div className="flex-1 flex flex-col min-h-0">
-              <ChatInterface />
             </div>
           </div>
         </SignedIn>
