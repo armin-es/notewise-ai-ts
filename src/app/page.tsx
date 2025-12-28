@@ -95,7 +95,7 @@ export default function Home() {
                 <FileUpload />
               </div>
               <div className="bg-white rounded-lg border border-gray-200 p-4 flex-1 flex flex-col min-h-0">
-                <EmbeddingsList />
+                <EmbeddingsList selectedChatId={selectedChatId} />
               </div>
             </div>
           </div>
