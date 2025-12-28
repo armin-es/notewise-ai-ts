@@ -58,7 +58,7 @@ export async function POST(req: Request) {
 
     console.log("Chat API: Received messages:", messages.length);
 
-    // Convert messages to the format expected by AI SDK v4
+    // Format messages for the AI model
     const formattedMessages = messages.map(
       (msg: { role: string; content: string }) => ({
         role: msg.role as "user" | "assistant" | "system",
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       })
     );
 
-    console.log("Chat API: Starting streamText with tools (AI SDK v4)");
+    console.log("Chat API: Starting streamText with tools");
 
     const result = streamText({
       model: openai("gpt-4o"),
@@ -90,11 +90,13 @@ export async function POST(req: Request) {
               return {
                 success: true,
                 results: results.map((chunk) => ({
+                  chunkId: chunk.id, // Include chunk ID for tracking
                   content: chunk.content,
                   source:
                     chunk.metadata?.source ||
                     chunk.metadata?.fileName ||
                     "unknown",
+                  chunkIndex: chunk.metadata?.chunkIndex,
                   similarity: chunk.similarity,
                 })),
                 count: results.length,
@@ -308,7 +310,6 @@ Format as JSON only, no additional text.`;
 
     console.log("Chat API: StreamText result created, returning response");
 
-    // Use toDataStreamResponse for proper useChat compatibility with tools
     return result.toDataStreamResponse();
   } catch (error) {
     console.error("Chat API error:", error);

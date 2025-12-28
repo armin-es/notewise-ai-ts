@@ -52,17 +52,24 @@ export async function searchSimilar(
   // Convert distance to similarity score (1 - distance for cosine)
   // Cosine distance ranges from 0 (identical) to 2 (opposite)
   // Similarity score: 1 - distance/2, ranges from 0 (opposite) to 1 (identical)
-  return results.map((result) => ({
-    id: result.id,
-    content: result.content,
-    metadata: result.metadata as Record<string, any> | null,
-    // For cosine distance: similarity = 1 - (distance / 2)
-    // Distance is already a number, so we calculate similarity
-    similarity:
-      typeof result.distance === "number"
-        ? Math.max(0, 1 - result.distance / 2)
-        : 0.5, // Fallback if distance is somehow not a number
-  }));
+  return results.map(
+    (result: {
+      id: string;
+      content: string;
+      metadata: any;
+      distance: number;
+    }) => ({
+      id: result.id,
+      content: result.content,
+      metadata: result.metadata as Record<string, any> | null,
+      // For cosine distance: similarity = 1 - (distance / 2)
+      // Distance is already a number, so we calculate similarity
+      similarity:
+        typeof result.distance === "number"
+          ? Math.max(0, 1 - result.distance / 2)
+          : 0.5, // Fallback if distance is somehow not a number
+    })
+  );
 }
 
 /**

@@ -161,11 +161,20 @@ export function ChatInterface({
       return;
     }
     
+    // Extract sources from content if this is an assistant message
+    let sources = null;
+    if (role === 'assistant') {
+      const { sources: extractedSources } = parseSourcesFromContent(content);
+      if (extractedSources.length > 0) {
+        sources = extractedSources.map(s => ({ name: s.name, relevance: s.relevance }));
+      }
+    }
+    
     try {
       await fetch(`/api/chats/${chatId}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role, content }),
+        body: JSON.stringify({ role, content, sources }),
       });
     } catch (error) {
       console.error('Failed to save message:', error);

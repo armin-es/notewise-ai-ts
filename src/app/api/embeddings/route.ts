@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { embeddings } from '@/lib/db/schema';
-import { auth } from '@clerk/nextjs/server';
-import { eq, sql } from 'drizzle-orm';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { embeddings } from "@/lib/db/schema";
+import { auth } from "@clerk/nextjs/server";
+import { eq, sql } from "drizzle-orm";
 
 /**
  * GET /api/embeddings
@@ -13,10 +13,7 @@ export async function GET(req: NextRequest) {
     // Check authentication
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get all embeddings grouped by source (file name), filtered by user
@@ -39,20 +36,33 @@ export async function GET(req: NextRequest) {
     // Transform the results (handle different result formats from drizzle)
     const rows = (result as any).rows || (Array.isArray(result) ? result : []);
     const fileList = rows.map((row: any) => ({
-      source: row.source || 'unknown',
-      fileName: row.fileName || row.filename || row.source || 'unknown',
-      chunkCount: typeof row.chunkCount === 'number' ? row.chunkCount : parseInt(String(row.chunkcount || row.chunkCount || '0'), 10),
+      source: row.source || "unknown",
+      fileName: row.fileName || row.filename || row.source || "unknown",
+      chunkCount:
+        typeof row.chunkCount === "number"
+          ? row.chunkCount
+          : parseInt(String(row.chunkcount || row.chunkCount || "0"), 10),
       firstUploaded: row.firstUploaded || row.firstuploaded || null,
       lastUpdated: row.lastUpdated || row.lastupdated || null,
-      embeddingIds: Array.isArray(row.embeddingIds) ? row.embeddingIds : (Array.isArray(row.embeddingids) ? row.embeddingids : []),
+      embeddingIds: Array.isArray(row.embeddingIds)
+        ? row.embeddingIds
+        : Array.isArray(row.embeddingids)
+        ? row.embeddingids
+        : [],
     }));
 
     return NextResponse.json({ files: fileList });
   } catch (error) {
-    console.error('Error fetching embeddings:', error);
+    console.error("Error fetching embeddings:", error);
+    console.error(
+      "Error details:",
+      error instanceof Error ? error.stack : error
+    );
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : 'Failed to fetch embeddings',
+        error:
+          error instanceof Error ? error.message : "Failed to fetch embeddings",
+        details: error instanceof Error ? error.message : String(error),
       },
       { status: 500 }
     );
@@ -68,27 +78,27 @@ export async function DELETE(req: NextRequest) {
     // Check authentication
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchParams = req.nextUrl.searchParams;
-    const source = searchParams.get('source');
+    const source = searchParams.get("source");
 
     if (!source) {
       return NextResponse.json(
-        { error: 'Source parameter is required' },
+        { error: "Source parameter is required" },
         { status: 400 }
       );
     }
 
     // Delete all embeddings where metadata->>'source' matches AND belongs to user
-    const deleted = await db
+    // Note: Type assertion needed for union type compatibility between node-postgres and neon-http
+    const deleted = (await db
       .delete(embeddings)
-      .where(sql`${embeddings.metadata}->>'source' = ${source} AND user_id = ${userId}`)
-      .returning({ id: embeddings.id });
+      .where(
+        sql`${embeddings.metadata}->>'source' = ${source} AND user_id = ${userId}`
+      )
+      .returning({ id: embeddings.id })) as Array<{ id: string }>;
 
     return NextResponse.json({
       success: true,
@@ -97,13 +107,15 @@ export async function DELETE(req: NextRequest) {
       message: `Deleted ${deleted.length} chunk(s) for ${source}`,
     });
   } catch (error) {
-    console.error('Error deleting embeddings:', error);
+    console.error("Error deleting embeddings:", error);
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : 'Failed to delete embeddings',
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to delete embeddings",
       },
       { status: 500 }
     );
   }
 }
-

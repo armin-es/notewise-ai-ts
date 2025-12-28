@@ -38,7 +38,6 @@ export const searchNotesTool = tool({
     },
     required: ["query"],
   }),
-  // @ts-expect-error - AI SDK v6 type definitions issue
   execute: async ({ query, topK }: SearchNotesParams) => {
     try {
       console.log(
@@ -92,7 +91,6 @@ export const summarizeNotesTool = tool({
     },
     required: ["content"],
   }),
-  // @ts-expect-error - AI SDK v6 type definitions issue
   execute: async ({ content, focus }: SummarizeNotesParams) => {
     try {
       const model = openai("gpt-4o");
@@ -154,7 +152,6 @@ export const findGapsTool = tool({
     },
     required: ["query"],
   }),
-  // @ts-expect-error - AI SDK v6 type definitions issue
   execute: async ({
     query,
     relevantContent,
@@ -271,7 +268,6 @@ export const extractEntitiesTool = tool({
     },
     required: ["content"],
   }),
-  // @ts-expect-error - AI SDK v6 type definitions issue
   execute: async ({ content, entityTypes }: ExtractEntitiesParams) => {
     try {
       const model = openai("gpt-4o");

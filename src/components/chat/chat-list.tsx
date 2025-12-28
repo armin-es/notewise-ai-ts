@@ -125,10 +125,10 @@ export const ChatList = forwardRef<ChatListRef, ChatListProps>(function ChatList
         )}
 
         {chats.map((chat) => (
-          <button
+          <div
             key={chat.id}
             onClick={() => onSelectChat(chat.id)}
-            className={`w-full group flex items-center gap-2 px-3 py-2 text-left rounded-lg transition-colors ${
+            className={`w-full group flex items-center gap-2 px-3 py-2 text-left rounded-lg transition-colors cursor-pointer ${
               selectedChatId === chat.id
                 ? 'bg-blue-100 text-blue-700'
                 : 'hover:bg-gray-100 text-gray-700'
@@ -152,7 +152,7 @@ export const ChatList = forwardRef<ChatListRef, ChatListProps>(function ChatList
                 <Trash2 className="w-4 h-4" />
               )}
             </button>
-          </button>
+          </div>
         ))}
       </div>
     </div>
