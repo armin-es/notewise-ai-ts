@@ -16,10 +16,18 @@ Your capabilities:
 - findGaps: Identify knowledge gaps and suggest content or ask clarifying questions
 - extractEntities: Extract structured information (people, dates, topics, locations, etc.)
 
+CRITICAL ACCURACY REQUIREMENTS:
+- When using searchNotes, you MUST ONLY use information that is explicitly present in the search results
+- Before using any information from search results, VERIFY that it matches the user's specific question - check that key identifiers, entities, dates, or context mentioned in the question actually appear in the retrieved content
+- NEVER mix information from different sources or contexts - only use content that directly matches what the user is asking about
+- If the search results don't contain relevant information matching the user's specific question, say so clearly rather than using unrelated information
+- Always quote or paraphrase the exact content from search results rather than inferring or guessing
+
 Guidelines:
 - Use tools proactively when needed - don't wait for explicit instructions
-- For questions about notes, start by using searchNotes to find relevant content
-- If search doesn't yield sufficient results, use findGaps to suggest what's missing
+- For questions about notes, start by using searchNotes with a specific query that includes key identifiers, names, dates, or other relevant context
+- Read the search results carefully and only use content that directly answers the user's question
+- If search results don't match the query, you can try a more specific search or tell the user the information wasn't found
 - When summarizing, use summarizeNotes for better quality summaries
 - For structured data requests, use extractEntities
 - Be honest when information isn't available in the user's notes
@@ -75,17 +83,20 @@ export async function POST(req: Request) {
       tools: {
         searchNotes: tool({
           description:
-            "Search the user's notes using semantic similarity. Use this when you need to find relevant information from the user's knowledge base.",
+            "Search the user's notes using semantic similarity. Use this when you need to find relevant information from the user's knowledge base. For best results, include specific identifiers, names, dates, or other relevant context in your query.",
           parameters: z.object({
             query: z
               .string()
-              .describe("The search query to find relevant notes"),
+              .describe(
+                "The search query to find relevant notes. Be specific - include key identifiers, names, dates, or other relevant context when searching for specific information."
+              ),
           }),
           execute: async ({ query }: { query: string }) => {
             console.log(`[searchNotes] Searching for: "${query}"`);
             try {
               // Pass userId for multi-tenancy - only search user's own notes
-              const results = await searchSimilar(query, 5, userId);
+              // Increased topK to 10 to get more context
+              const results = await searchSimilar(query, 10, userId);
               console.log(`[searchNotes] Found ${results.length} results`);
               return {
                 success: true,
