@@ -179,12 +179,14 @@ export async function GET(
         chunksByFile.set(fileKey, []);
       }
 
-      const chunkSet = fileChunkMap.get(fileKey) || new Set();
+      const chunkSet = fileChunkMap.get(fileKey);
+      // Only mark as referenced if this specific chunk ID is in the set
+      // If no chunk IDs are tracked, don't mark any chunks as referenced
       chunksByFile.get(fileKey)!.push({
         id: chunk.id,
         chunkIndex: chunk.chunkIndex,
         content: chunk.content,
-        isReferenced: chunkSet.has(chunk.id) || chunkSet.size === 0, // If no specific chunks tracked, mark all as potentially referenced
+        isReferenced: chunkSet ? chunkSet.has(chunk.id) : false,
       });
     }
 
